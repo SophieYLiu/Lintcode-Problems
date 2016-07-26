@@ -1,0 +1,67 @@
+/**
+ * Definition of TreeNode:
+ * class TreeNode {
+ * public:
+ *     int val;
+ *     TreeNode *left, *right;
+ *     TreeNode(int val) {
+ *         this->val = val;
+ *         this->left = this->right = NULL;
+ *     }
+ * }
+ */
+class Solution {
+public:
+    /**
+     * @param root the root of the binary tree
+     * @return all root-to-leaf paths
+     */
+    vector<string> binaryTreePaths(TreeNode* root) {
+        // Write your code here
+        //...............initialization................
+        string str="";
+        vector<string> Paths;//for final result
+        stack<TreeNode*> S;
+        stack<string> prev;
+        TreeNode* temp = root;
+        
+        bool branch=0;
+        
+        //as long as there is next
+        while(temp!=nullptr){
+            if(branch==1 && (temp->right)!=nullptr){
+               temp=temp->right;
+               branch=0;
+            }
+            //...............................
+            if(temp->left!=nullptr){
+                str += to_string(temp->val) + "->";
+                if(temp->right!=nullptr){
+                    S.push(temp);
+                    prev.push(str);
+                }
+                temp=temp->left;
+            }
+         
+            else if(temp->right!=nullptr){
+                str += to_string(temp->val) + "->";
+                temp=temp->right;
+            }
+            else{
+                str += to_string(temp->val);
+                Paths.push_back(str);
+                branch=0;
+                if(!S.empty()){
+                    temp=S.top();
+                    branch=1;
+                    str = prev.top();
+                    S.pop();
+                    prev.pop();
+                }
+                else{
+                    temp=nullptr;
+                }
+            }
+        }
+        return Paths;}
+};

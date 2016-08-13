@@ -1,0 +1,46 @@
+/**
+ * Definition of TreeNode:
+ * class TreeNode {
+ * public:
+ *     int val;
+ *     TreeNode *left, *right;
+ *     TreeNode(int val) {
+ *         this->val = val;
+ *         this->left = this->right = NULL;
+ *     }
+ * }
+ */
+ 
+ 
+class Solution {
+    /**
+     * @param root: The root of binary tree.
+     * @return: Level order a list of lists of integer
+     */
+public:
+    vector<vector<int>> levelOrder(TreeNode *root) {
+        // write your code here
+        
+        vector<vector<int>> result;
+        if(root == NULL) return result;//learn from mistake: forgot this 
+        vector<int> tmp;
+        queue<TreeNode *> q;
+        q.push(root);
+        while(!q.empty()){
+            int n = q.size();//learn from mistake: wrong if use q.size() in for loop becoz q changes while looping
+            for(int i = 0; i < n; i++){
+                tmp.push_back(q.front()->val);
+                if(q.front()->left) {
+                    q.push(q.front()->left);
+                }
+                if(q.front()->right){
+                    q.push(q.front()->right);
+                }
+                q.pop();
+           }
+           result.push_back(tmp);
+           tmp.clear();
+       }
+       return result;
+    }
+};

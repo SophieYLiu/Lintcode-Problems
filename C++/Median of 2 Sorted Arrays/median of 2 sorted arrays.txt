@@ -1,0 +1,99 @@
+//convert it to find kth largest/smallest number. take the A[k/2] and B[k/2], compare to decide check which side
+//kth largest: version 1
+double findKth(int a[], int m, int b[], int n, int k)
+{
+    //always assume that m is equal or smaller than n
+    if (m > n)
+        return findKth(b, n, a, m, k);
+    if (m == 0)
+        return b[k - 1];
+    if (k == 1)
+        return min(a[0], b[0]);
+    //divide k into two parts
+    int pa = min(k / 2, m), pb = k - pa;
+    if (a[pa - 1] < b[pb - 1])
+        return findKth(a + pa, m - pa, b, n, k - pa);
+    else if (a[pa - 1] > b[pb - 1])
+        return findKth(a, m, b + pb, n - pb, k - pb);
+    else
+        return a[pa - 1];
+}
+
+class Solution
+{
+public:
+    double findMedianSortedArrays(int A[], int m, int B[], int n)
+    {
+        int total = m + n;
+        if (total & 0x1)
+            return findKth(A, m, B, n, total / 2 + 1);
+        else
+            return (findKth(A, m, B, n, total / 2)
+                    + findKth(A, m, B, n, total / 2 + 1)) / 2;
+    }
+};
+
+//kth largest: version 2
+class Solution {
+public:
+    double findKth(vector<int>& A, vector<int>& B, int A_st, int B_st, int k) {
+        // corner cases
+        if (A_st >= A.size()) {
+            return B[B_st + k - 1];
+        }
+        if (B_st >= B.size()) {
+            return A[A_st + k - 1];
+        }
+        if (k == 1) return min(A[A_st], B[B_st]);
+        int A_key = A_st + k / 2 - 1 >= A.size() ? INT_MAX : A[A_st + k / 2 - 1];
+        int B_key = B_st + k / 2 - 1 >= B.size() ? INT_MAX : B[B_st + k / 2 - 1];
+        if (A_key < B_key){
+            return findKth(A, B, A_st + k / 2, B_st, k - k / 2);
+        } else {
+            return findKth(A, B, A_st, B_st + k / 2, k - k / 2);
+        }
+        
+    }
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int sum = nums1.size() + nums2.size();
+        double ret;
+        
+        if (sum & 1) {
+            ret = findKth(nums1, nums2, 0, 0, sum / 2 + 1);
+        } else {
+            ret = ((findKth(nums1, nums2, 0, 0, sum / 2)) +
+                    findKth(nums1, nums2, 0, 0, sum / 2 + 1)) / 2.0;
+        }
+        return ret;
+    }
+};
+
+//naive solution: concatenate, sort and return median
+class Solution {
+public:
+    /**
+     * @param A: An integer array.
+     * @param B: An integer array.
+     * @return: a double whose format is *.5 or *.0
+     */
+    double findMedianSortedArrays(vector<int> A, vector<int> B) {
+        // write your code here
+        int m = A.size(), n = B.size();
+
+        vector<int> merged;
+        for(int i = 0; i < m+n; i++){
+            if(i < m){
+                merged.push_back(A[i]);
+            }
+            else{
+                merged.push_back(B[i-m]);
+            }
+        }
+        sort(merged.begin(), merged.end());
+        
+        double median;
+        (m + n)%2? median = double(merged[(m + n)/2]): median = double((merged[(m+n)/2] + merged[(m+n)/2 - 1]))/2.0;
+       
+        return median;
+    }
+};
